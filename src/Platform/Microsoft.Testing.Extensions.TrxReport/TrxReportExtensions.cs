@@ -49,10 +49,10 @@ public static class TrxReportExtensions
                 serviceProvider.GetService<TrxTestApplicationLifecycleCallbacks>(),
                 serviceProvider.GetLoggerFactory().CreateLogger<TrxReportGenerator>()));
 
-        if (TrxModeHelpers.IsTestHostControllerSupported)
-        {
-            ControllerBackedRegistrations(builder);
-        }
+        // if (TrxModeHelpers.IsTestHostControllerSupported)
+        // {
+        //     ControllerBackedRegistrations(builder);
+        // }
 
         builder.TestHost.AddDataConsumer(compositeTestSessionTrxService);
         builder.TestHost.AddTestSessionLifetimeHandler(compositeTestSessionTrxService);

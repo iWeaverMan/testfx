@@ -93,11 +93,12 @@ internal sealed partial class TestHostBuilder
             return new InformativeCommandLineHost(0, context.ServiceProvider);
         }
 
-        return await TryBuildTestHostOrchestratorHostAsync(context).ConfigureAwait(false) is { } testHostOrchestratorHost
-            ? testHostOrchestratorHost
-            : await TryBuildTestHostControllersHostAsync(context).ConfigureAwait(false) is { } testHostControllerHost
-            ? testHostControllerHost
-            : await BuildTestHostModeAsync(context).ConfigureAwait(false);
+        return await BuildTestHostModeAsync(context).ConfigureAwait(false);
+        // return await TryBuildTestHostOrchestratorHostAsync(context).ConfigureAwait(false) is { } testHostOrchestratorHost
+        //     ? testHostOrchestratorHost
+        //     : await TryBuildTestHostControllersHostAsync(context).ConfigureAwait(false) is { } testHostControllerHost
+        //     ? testHostControllerHost
+        //     : await BuildTestHostModeAsync(context).ConfigureAwait(false);
     }
 
     private async Task<IReadOnlyList<ITool>> BuildToolsInformationAsync(BuildContext context)
