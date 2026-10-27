@@ -7,6 +7,7 @@ using Microsoft.Testing.Platform.Resources;
 #endif
 using Microsoft.Testing.Platform.ServerMode;
 using Microsoft.Testing.Platform.Services;
+using Microsoft.Testing.Platform.Extensions.OutputDevice;
 
 namespace Microsoft.Testing.Platform.OutputDevice;
 
@@ -64,52 +65,67 @@ internal sealed class PlatformOutputDeviceManager
                 : null);
     }
 
+    class EmptyPlatformOutputDevice: IPlatformOutputDevice 
+    {
+        public string Uid => "Astraeus.EmptyPlatformOutputDevice";
+        public string DisplayName => "Astraeus Test Framework";
+        public string Description => "A astraeus testing framework";
+        public string Version => "1.0.0";
+        public Task<bool> IsEnabledAsync() => Task.FromResult(true);
+        public Task DisplayBannerAsync(string? bannerMessage, CancellationToken cancellationToken) => Task.CompletedTask;
+        public Task DisplayBeforeSessionStartAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+        public Task DisplayAfterSessionEndRunAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+        public Task DisplayAsync(IOutputDeviceDataProducer producer, IOutputDeviceData data, CancellationToken cancellationToken) => Task.CompletedTask;
+        public Task HandleProcessRoleAsync(TestProcessRole processRole, CancellationToken cancellationToken) => Task.CompletedTask;
+    }
+
     public static IPlatformOutputDevice GetDefaultTerminalOutputDevice(ServiceProvider serviceProvider)
     {
-        if (OperatingSystem.IsBrowser())
-        {
-#if NET7_0_OR_GREATER
-            return new BrowserOutputDevice(
-                serviceProvider.GetConsole(),
-                serviceProvider.GetTestApplicationModuleInfo(),
-                serviceProvider.GetAsyncMonitorFactory().Create(),
-                serviceProvider.GetRuntimeFeature(),
-                serviceProvider.GetEnvironment(),
-                serviceProvider.GetPlatformInformation(),
-                serviceProvider.GetCommandLineOptions(),
-                serviceProvider.GetRequiredService<IStopPoliciesService>());
-#else
-            throw new PlatformNotSupportedException(PlatformResources.BrowserPlatformNotSupportedOnOlderFrameworks);
-#endif
-        }
+        return new EmptyPlatformOutputDevice();
+//         if (OperatingSystem.IsBrowser())
+//         {
+// #if NET7_0_OR_GREATER
+//             return new BrowserOutputDevice(
+//                 serviceProvider.GetConsole(),
+//                 serviceProvider.GetTestApplicationModuleInfo(),
+//                 serviceProvider.GetAsyncMonitorFactory().Create(),
+//                 serviceProvider.GetRuntimeFeature(),
+//                 serviceProvider.GetEnvironment(),
+//                 serviceProvider.GetPlatformInformation(),
+//                 serviceProvider.GetCommandLineOptions(),
+//                 serviceProvider.GetRequiredService<IStopPoliciesService>());
+// #else
+//             throw new PlatformNotSupportedException(PlatformResources.BrowserPlatformNotSupportedOnOlderFrameworks);
+// #endif
+//         }
 
-        if (OperatingSystem.IsWasi())
-        {
-            return new WasiOutputDevice(
-                serviceProvider.GetConsole(),
-                serviceProvider.GetTestApplicationModuleInfo(),
-                serviceProvider.GetAsyncMonitorFactory().Create(),
-                serviceProvider.GetRuntimeFeature(),
-                serviceProvider.GetEnvironment(),
-                serviceProvider.GetPlatformInformation(),
-                serviceProvider.GetRequiredService<IStopPoliciesService>());
-        }
+//         if (OperatingSystem.IsWasi())
+//         {
+//             return new WasiOutputDevice(
+//                 serviceProvider.GetConsole(),
+//                 serviceProvider.GetTestApplicationModuleInfo(),
+//                 serviceProvider.GetAsyncMonitorFactory().Create(),
+//                 serviceProvider.GetRuntimeFeature(),
+//                 serviceProvider.GetEnvironment(),
+//                 serviceProvider.GetPlatformInformation(),
+//                 serviceProvider.GetRequiredService<IStopPoliciesService>());
+//         }
 
-        // Default to terminal output device for other platforms.
-        return new TerminalOutputDevice(
-            serviceProvider.GetConsole(),
-            serviceProvider.GetTestApplicationModuleInfo(),
-            serviceProvider.GetTestHostControllerInfo(),
-            serviceProvider.GetAsyncMonitorFactory().Create(),
-            serviceProvider.GetRuntimeFeature(),
-            serviceProvider.GetEnvironment(),
-            serviceProvider.GetPlatformInformation(),
-            serviceProvider.GetCommandLineOptions(),
-            serviceProvider.GetFileLoggerInformation(),
-            serviceProvider.GetLoggerFactory(),
-            serviceProvider.GetClock(),
-            serviceProvider.GetRequiredService<IStopPoliciesService>(),
-            serviceProvider.GetTestApplicationCancellationTokenSource(),
-            serviceProvider.GetRequiredService<ITestCoverageResult>());
+//         // Default to terminal output device for other platforms.
+//         return new TerminalOutputDevice(
+//             serviceProvider.GetConsole(),
+//             serviceProvider.GetTestApplicationModuleInfo(),
+//             serviceProvider.GetTestHostControllerInfo(),
+//             serviceProvider.GetAsyncMonitorFactory().Create(),
+//             serviceProvider.GetRuntimeFeature(),
+//             serviceProvider.GetEnvironment(),
+//             serviceProvider.GetPlatformInformation(),
+//             serviceProvider.GetCommandLineOptions(),
+//             serviceProvider.GetFileLoggerInformation(),
+//             serviceProvider.GetLoggerFactory(),
+//             serviceProvider.GetClock(),
+//             serviceProvider.GetRequiredService<IStopPoliciesService>(),
+//             serviceProvider.GetTestApplicationCancellationTokenSource(),
+//             serviceProvider.GetRequiredService<ITestCoverageResult>());
     }
 }
